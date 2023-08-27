@@ -16,8 +16,8 @@ const Home = () => {
     return (
         <>          
             <FadeHome>
-                <Login/>
-                {/* <Calendar/> */}
+                {/* <Login/> */}
+                <Calendar/>
                 {/* <HomeContent>
                     우리는 수어교육의 격차를 해소하고자<br/>
                     인공지능 기반 수어 학습 프로그램을 제공합니다.<br/>

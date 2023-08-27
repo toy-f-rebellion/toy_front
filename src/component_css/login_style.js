@@ -54,3 +54,5 @@ export const NaverBtn=styled.img`
 export const KakaoeBtn=styled.img`
     margin:10px; 
 `
+
+

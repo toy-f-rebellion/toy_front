@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { MdChevronLeft } from 'react-icons/md';
 import Datepicker from './datepicker';
 import { Button, TextField, makeStyles } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
-import { createSchedule } from './redux/modules/schedule';
+import { createSchedule } from './schedule';
 import moment from 'moment';
 
-const AddSchedule = ({ history }) => {
+// const AddSchedule = ({ history }) => {
+  const AddSchedule = () => {
   const [date, setDate] = useState(
     moment().format().split(':')[0] + ':' + moment().format().split(':')[1]
   );
@@ -15,6 +17,10 @@ const AddSchedule = ({ history }) => {
   const [description, setDescription] = useState('');
   const [titleError, setTitleError] = useState(false);
   const dispatch = useDispatch();
+
+  // Initialize the references here
+  const inputTitle = useRef(null);
+  const inputDescription = useRef(null);
 
   const useStyles = makeStyles((theme) => ({
     textField: {
@@ -31,7 +37,7 @@ const AddSchedule = ({ history }) => {
   }));
 
   const classes = useStyles();
-
+  const navigate = useNavigate();
   const onAddSchedule = () => {
     if (checkValid()) {
       const yyyymmdd = date.split('T')[0].replaceAll('-', '');
@@ -40,7 +46,8 @@ const AddSchedule = ({ history }) => {
 
       dispatch(createSchedule(data));
 
-      history.push('/');
+      // history.push('/');
+      navigate('/');
     }
   };
 
@@ -57,7 +64,8 @@ const AddSchedule = ({ history }) => {
       <Header>
         <MdChevronLeft
           onClick={() => {
-            history.goBack();
+            // history.goBack();
+            navigate(-1);
           }}
         />
         일정 추가 &nbsp;&nbsp;&nbsp;
@@ -72,7 +80,9 @@ const AddSchedule = ({ history }) => {
           className={classes.textField}
           onChange={(e) => {
             setTitle(e.target.value);
+            setTitleError(false); // Reset the error state when user starts typing.
           }}
+          inputRef={inputTitle} // Use the ref here.
         />
         <TextField
           id="outlined-multiline-static"
@@ -84,6 +94,7 @@ const AddSchedule = ({ history }) => {
           onChange={(e) => {
             setDescription(e.target.value);
           }}
+          inputRef={inputDescription} // Use the ref here.
         />
         <Button
           className={classes.button}

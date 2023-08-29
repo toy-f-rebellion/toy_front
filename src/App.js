@@ -11,6 +11,8 @@ import AddSchedule from './component/addschedule';
 import DatePicker from './component/datepicker';
 import Day from './component/day';
 import Schedule from './component/schedule';
+import Chatting from './component/chatting';
+import Mypage from './component/mypage';
 // import { withRouter } from 'react-router';
 import { useSelector } from 'react-redux';
 
@@ -48,6 +50,10 @@ import { useSelector } from 'react-redux';
               <Route exact path="day" element={<Day />}/>
               {/* 스케줄 */}
               <Route exact path="schedule" element={<Schedule />}/>
+              {/* 채팅 */}
+              <Route exact path="chatting" element={<Chatting />}/>
+              {/* 마이페이지 */}
+              <Route exact path="mypage" element={<Mypage />}/>
             </Routes>
             {/* <a><Footer /></a> */}
       </BrowserRouter> 

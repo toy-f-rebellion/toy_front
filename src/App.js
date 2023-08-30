@@ -1,25 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+// App.js
+import React from 'react';
+import { STT } from './Speech-To-Text';
+import { TTS } from './Text-To-Speech';
 
-function App() {
+const App = () => {
+  const {
+    transcript,
+    listening,
+    startListening,
+    stopListening,
+    resetTranscript
+  } = STT();
+
+  const { text, 
+    handleTextChange, 
+    playTTS 
+  } = TTS();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <p>Microphone: {listening ? 'on' : 'off'}</p>
+      <button onClick={startListening}>Start</button>
+      <button onClick={stopListening}>Stop</button>
+      <button onClick={resetTranscript}>Reset</button>
+      <p>{transcript}</p>
+      <div className="TextToSpeech">
+        <input
+          type="text"
+          value={text}
+          onChange={handleTextChange}
+          placeholder="텍스트를 입력하세요"
+        />
+        <button onClick={playTTS}>음성으로 변환</button>
+      </div>
     </div>
   );
-}
+};
 
 export default App;

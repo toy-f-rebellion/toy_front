@@ -1,9 +1,31 @@
-// App.js
-import React from 'react';
+import './App.css';
+import { firestore } from './component/firebase';
+import React, { useEffect } from 'react';
+import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
+// import Home from "./component/home";
+import Login from "./component/login";
+import Redirection from "./component/redirection";
+import Calendar from './component/calendar';
+import EditSchedule from './component/editschedule';
+import AddSchedule from './component/addschedule';
+import DatePicker from './component/datepicker';
+import Day from './component/day';
+import Schedule from './component/schedule';
+import Chatting from './component/chatting';
+import Mypage from './component/mypage';
+// import { withRouter } from 'react-router';
+import { useSelector } from 'react-redux';
+
 import { STT } from './Speech-To-Text';
 import { TTS } from './Text-To-Speech';
 
-const App = () => {
+// function App() {
+// const App = ({ history }) => {
+  const App = () => {
+  const { isOpenEditPopup } = useSelector((state) => state.schedule);
+  useEffect(() => {
+    console.log(firestore);
+  });
   const {
     transcript,
     listening,
@@ -16,25 +38,43 @@ const App = () => {
     handleTextChange, 
     playTTS 
   } = TTS();
-
   return (
-    <div>
-      <p>Microphone: {listening ? 'on' : 'off'}</p>
-      <button onClick={startListening}>Start</button>
-      <button onClick={stopListening}>Stop</button>
-      <button onClick={resetTranscript}>Reset</button>
-      <p>{transcript}</p>
-      <div className="TextToSpeech">
-        <input
-          type="text"
-          value={text}
-          onChange={handleTextChange}
-          placeholder="텍스트를 입력하세요"
-        />
-        <button onClick={playTTS}>음성으로 변환</button>
-      </div>
+    <div className="App">
+      {/* <header className="App-header">
+      </header> */}
+      <BrowserRouter>
+        {/* <GlobalStyles/>           */}
+          {/* <Header /> */}
+            <Routes>
+              {/* 루트 */}
+              <Route exact path="/" element={<Login />}/>
+              {/* 로그인 */}
+              <Route exact path="login" element={<Login />}/>
+              {/* 카카오 리다이렉션 */}
+              <Route exact path='/kakao/callback' element={<Redirection />} />
+              {/* 캘린더 */}
+              <Route exact path="calendar" element={<Calendar />}/>
+              {/* 스케줄추가 */}
+              <Route exact path="addschedule" element={<AddSchedule />}/>
+              {/* 스케줄편집 */}
+              <Route exact path="editschedule" element={<EditSchedule />}/>
+              
+              {/* 날짜피커 */}
+              <Route exact path="datepicker" element={<DatePicker />}/>
+              {/* 날짜 */}
+              <Route exact path="day" element={<Day />}/>
+              {/* 스케줄 */}
+              <Route exact path="schedule" element={<Schedule />}/>
+              {/* 채팅 */}
+              <Route exact path="chatting" element={<Chatting />}/>
+              {/* 마이페이지 */}
+              <Route exact path="mypage" element={<Mypage />}/>
+            </Routes>
+            {/* <a><Footer /></a> */}
+      </BrowserRouter> 
     </div>
   );
 };
 
 export default App;
+{/* // export default withRouter(App); */}

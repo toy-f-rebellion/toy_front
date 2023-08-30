@@ -16,6 +16,9 @@ import Mypage from './component/mypage';
 // import { withRouter } from 'react-router';
 import { useSelector } from 'react-redux';
 
+import { STT } from './Speech-To-Text';
+import { TTS } from './Text-To-Speech';
+
 // function App() {
 // const App = ({ history }) => {
   const App = () => {
@@ -23,6 +26,18 @@ import { useSelector } from 'react-redux';
   useEffect(() => {
     console.log(firestore);
   });
+  const {
+    transcript,
+    listening,
+    startListening,
+    stopListening,
+    resetTranscript
+  } = STT();
+
+  const { text, 
+    handleTextChange, 
+    playTTS 
+  } = TTS();
   return (
     <div className="App">
       {/* <header className="App-header">
@@ -59,7 +74,7 @@ import { useSelector } from 'react-redux';
       </BrowserRouter> 
     </div>
   );
-}
+};
 
 export default App;
-// export default withRouter(App);
+{/* // export default withRouter(App); */}

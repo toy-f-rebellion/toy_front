@@ -1,5 +1,6 @@
 import {Link} from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 import '../component_css/login.css';
 import {
     LoginWrapper,
@@ -40,6 +41,86 @@ const Login = () => {
   const handleSignUpClick = () => {
     console.log('Sign up button clicked'); // 클릭 시 콘솔에 메시지 출력
   };
+
+  const [data, setData] = useState(null);
+  const [UserData,setUserData] = useState();
+  const [token, setToken] = useState(null);
+  
+  useEffect(() => {
+    const checkEmail = async () => {
+      const payload = { 
+        userEmail: "use3311@email.com",
+        userPassword: "user1password"
+       };
+      
+      try {
+        const response = await axios.post('http://13.209.16.226:8080/api/auth/signIn', payload);
+        console.log(response.data); 
+        setData(response.data); // 응답 데이터를 state 변수에 저장
+        setToken(response.data.data.token); // Save the token to state
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    checkEmail();
+    
+
+    // axios.get("/api/diary/view?addDate=2023-01-01")
+    // .then(function (response) {
+    //     // response  
+    //     console.log(response.diaryDetail);
+    //     setUserData(response.data.data); // 이 부분이 누락되어 있어서 추가했습니다.
+    // }).catch(function (error) {
+    //     // 오류발생시 실행
+    // }).then(function() {
+    //     // 항상 실행
+    // });
+  }, []); // 빈 배열을 dependency로 전달하여 마운트 시 한 번만 실행되도록 함
+  console.log(data);
+  console.log(UserData);
+
+  useEffect(() => {
+    if (!token) return; // If there's no token yet, don't do anything
+
+    const fetchData = async () => {
+      try{
+        const response = await axios.get('http://13.209.16.226:8080/api/diary/view?addDate=2023-01-01', {
+          headers: { Authorization: `Bearer ${token}` } // Use the token here
+        });
+        
+        console.log(response.data);
+      } catch (error) {
+         console.error("Error fetching data: ", error);
+       }
+     };
+     
+     fetchData();
+   }, [token]); // Run this effect whenever the token changes
+
+
+  // ================================ 메세지 전송 코드 ==================================== 
+  //  useEffect(() => {
+  //   if (!token) return; // If there's no token yet, don't do anything
+  //   const sendData = async () => {
+  //     try{
+  //       const payload = { 
+  //         diaryDetail: "메세지 전송 성공~!",
+  //         addDate: "2023-07-01"
+  //        };
+
+  //        // Replace 'http://your-api-url' with your actual API endpoint
+  //        const response = await axios.post('http://13.209.16.226:8080/api/diary/create', payload ,{
+  //          headers: { Authorization: `Bearer ${token}` } // Use the token here
+  //        });
+        
+  //        console.log(response.data);
+  //      } catch (error) {
+  //         console.error("Error sending data: ", error);
+  //      }
+  //    };
+     
+  //    sendData();
+  //  }, [token]); // Run this effect whenever the token changes
 
   return (
     <div className="login">

@@ -26,6 +26,7 @@ const schedule = createReducer(initialState, {
     state.fullSchedule = payload.fullList;
     state.thisMonthSchedule = payload.thisMonthSchedule;
 
+    // 완료된 것들만 선택적으로 보여주는 필터 기능을 수행
     if (state.isFilter) {
       state.thisMonth = state.thisMonthSchedule.filter((sc) => {
         return sc.completed === true;
@@ -40,9 +41,13 @@ const schedule = createReducer(initialState, {
     state.currentSchedule = payload.schedule;
   },
   [addSchedule]: (state, { payload }) => {
+    console.log('스케줄생성');
     state.fullSchedule.push(payload);
     if (!state.isFilter) {
         state.thisMonth.push(payload);
+    }
+    else {
+      console.log('스케줄생성실패');
     }
   },
   [setIsFilter]: (state, { payload }) => {
@@ -94,8 +99,12 @@ export const createSchedule = (data) => {
   return (dispatch) => {
     const saveData = { ...data, completed: false };
     db.add(saveData).then((docRef) => {
+      console.log("Document reference:", docRef);
       let schedule = { ...saveData, id: docRef.id };
       dispatch(addSchedule(schedule));
+    })
+    .catch((error) => {
+      console.error("Error adding schedule:", error);
     });
   };
 };

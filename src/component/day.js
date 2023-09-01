@@ -1,12 +1,12 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { openEditPopup } from './schedule';
+// import { openEditPopup } from './schedule';
 const Day = ({ dateInfo, className }) => {
   const schedule = dateInfo.currentSch;
   const dispatch = useDispatch();
   const openPopup = (schedule) => {
-    dispatch(openEditPopup({ isOpen: true, schedule }));
+    // dispatch(openEditPopup({ isOpen: true, schedule }));
   };
   schedule.sort((a, b) => a.time - b.time);
   const mapToPlan = schedule.map((s, idx) => {

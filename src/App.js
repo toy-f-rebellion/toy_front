@@ -1,43 +1,31 @@
 import './App.css';
-import { firestore } from './component/firebase';
+// import { firestore } from './component/firebase';
 import React, { useEffect } from 'react';
 import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
 // import Home from "./component/home";
 import Login from "./component/login";
 import Redirection from "./component/redirection";
 import Calendar from './component/calendar';
-import EditSchedule from './component/editschedule';
 import AddSchedule from './component/addschedule';
-import DatePicker from './component/datepicker';
-import Day from './component/day';
-import Schedule from './component/schedule';
+import EditSchedule from './component/editschedule';
 import Chatting from './component/chatting';
 import Mypage from './component/mypage';
+import STTTTS from './component/stt-tts';
+import GPTchat from './component/gptchat';
 // import { withRouter } from 'react-router';
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 
-import { STT } from './Speech-To-Text';
-import { TTS } from './Text-To-Speech';
+
 
 // function App() {
 // const App = ({ history }) => {
   const App = () => {
-  const { isOpenEditPopup } = useSelector((state) => state.schedule);
+  // const { isOpenEditPopup } = useSelector((state) => state.schedule);
+  // const { isOpenEditPopup } = useSelector(state => state.someReducer);
   useEffect(() => {
-    console.log(firestore);
+    // console.log(firestore);
   });
-  const {
-    transcript,
-    listening,
-    startListening,
-    stopListening,
-    resetTranscript
-  } = STT();
 
-  const { text, 
-    handleTextChange, 
-    playTTS 
-  } = TTS();
   return (
     <div className="App">
       {/* <header className="App-header">
@@ -47,7 +35,7 @@ import { TTS } from './Text-To-Speech';
           {/* <Header /> */}
             <Routes>
               {/* 루트 */}
-              <Route exact path="/" element={<Login />}/>
+              <Route exact path="/" element={<Calendar />}/>
               {/* 로그인 */}
               <Route exact path="login" element={<Login />}/>
               {/* 카카오 리다이렉션 */}
@@ -56,19 +44,17 @@ import { TTS } from './Text-To-Speech';
               <Route exact path="calendar" element={<Calendar />}/>
               {/* 스케줄추가 */}
               <Route exact path="addschedule" element={<AddSchedule />}/>
-              {/* 스케줄편집 */}
+              {/* 스케줄추가 */}
               <Route exact path="editschedule" element={<EditSchedule />}/>
               
-              {/* 날짜피커 */}
-              <Route exact path="datepicker" element={<DatePicker />}/>
-              {/* 날짜 */}
-              <Route exact path="day" element={<Day />}/>
-              {/* 스케줄 */}
-              <Route exact path="schedule" element={<Schedule />}/>
               {/* 채팅 */}
               <Route exact path="chatting" element={<Chatting />}/>
               {/* 마이페이지 */}
               <Route exact path="mypage" element={<Mypage />}/>
+              {/* stt/tts */}
+              <Route exact path="stt-tts" element={<STTTTS />}/>
+              {/* GPT */}
+              <Route exact path="gptchat" element={<GPTchat />}/>
             </Routes>
             {/* <a><Footer /></a> */}
       </BrowserRouter> 

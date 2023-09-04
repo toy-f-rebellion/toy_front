@@ -1,12 +1,20 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-// import { openEditPopup } from './schedule';
+import { openEditPopup } from './redux/modules/schedule';
+import { createAction } from '@reduxjs/toolkit';
+
+export const openPopup = createAction('OPEN_POPUP', (schedule) => {
+  return { payload: { isOpen: true, schedule } };
+});
+
 const Day = ({ dateInfo, className }) => {
   const schedule = dateInfo.currentSch;
   const dispatch = useDispatch();
+
+  
   const openPopup = (schedule) => {
-    // dispatch(openEditPopup({ isOpen: true, schedule }));
+    dispatch(openEditPopup({ isOpen: true, schedule }));
   };
   schedule.sort((a, b) => a.time - b.time);
   const mapToPlan = schedule.map((s, idx) => {

@@ -23,74 +23,37 @@ import {
   MdDoneAll,
   MdEdit
 } from 'react-icons/md';
-// import { useDispatch, useSelector } from 'react-redux';
-// import {
-//   readSchedule,
-//   setIsFilter,
-//   openEditPopup
-// } from './schedule';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  readSchedule,
+  setIsFilter,
+  openEditPopup
+} from './redux/modules/schedule';
 import Day from './day';
 import EditSchedule from './editschedule';
 
-
-// const Calendar = ({ history }) => {
   const Calendar = () => {
-  // const { thisMonth, isOpenEditPopup, isFilter } = useSelector(
-  //   (state) => state.schedule
-  // );
-  // const { thisMonth, isOpenEditPopup, isFilter } = useSelector(
-  //   state => state.someReducer
-  // );
-  const [isOpenEditPopup, setIsOpenEditPopup] = useState(false);
-  // Function to open the popup
-  const openPopup = () => {
-    setIsOpenEditPopup(true);
-  };
 
-  // Function to close the popup
-  const closePopup = () => {
-    setIsOpenEditPopup(false);
-  };
-
+  const { thisMonth, isOpenEditPopup, isFilter } = useSelector(
+    (state) => state.schedule
+  );
+  
   const [isEditPopupOpen, setEditPopupOpen] = useState(false);
 
-  const handleButtonClick = () => {
-    setEditPopupOpen(false); // 상태 변경 함수 호출
-  };
-
   // Dummy reducer
-  const thisMonth = [
-    { id: 1, date: "20230901", title: "Event1", description: "This is event1" },
-    { id: 2, date: "20230902", title: "Event2", description: "This is event2" },
-  ];
-  
-  // const isOpenEditPopup = false;
-  
-  const isFilter = false;
+  // const thisMonth = [
+  //   { id: 1, date: "20230901", title: "Event1", description: "This is event1" },
+  //   { id: 2, date: "20230902", title: "Event2", description: "This is event2" },
+  // ];
 
   const [current, setCurrent] = useState(moment());
-  const [schedules, setSchedules] = useState(thisMonth);
 
-  // ============================ 필터 관련 이벤트 ============================
-  // useEffect(() => {
-  //   const startDay = current.clone().startOf('month').format('YYYYMMDD');
-  //   const endDay = current.clone().endOf('month').format('YYYYMMDD');
-
-  //   // Filter the schedules based on the current month
-  //   const filteredSchedules = thisMonth.filter(schedule =>
-  //     schedule.startDay >= startDay && schedule.endDay <= endDay
-  //   );
-
-  //   setSchedules(filteredSchedules);
-    
-  //  }, [current, isOpenEditPopup, isFilter]);
-  
-  // const dispatch = useDispatch();
-  // useEffect(() => {
-  //   const startDay = current.clone().startOf('month').format('YYYYMMDD');
-  //   const endDay = current.clone().endOf('month').format('YYYYMMDD');
-  //   // dispatch(readSchedule({ startDay, endDay }));
-  // }, [current, dispatch, isOpenEditPopup, isFilter]);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const startDay = current.clone().startOf('month').format('YYYYMMDD');
+    const endDay = current.clone().endOf('month').format('YYYYMMDD');
+    dispatch(readSchedule({ startDay, endDay }));
+  }, [current, dispatch, isOpenEditPopup, isFilter]);
 
   const movePrevMonth = () => {
     setCurrent(current.clone().subtract(1, 'month'));
@@ -101,7 +64,6 @@ import EditSchedule from './editschedule';
   };
   const navigate = useNavigate();
   const goToAddSchedule = () => {
-    // history.push('/addSchedule');
     navigate('/addSchedule');
   };
   const generate = () => {
@@ -158,29 +120,6 @@ import EditSchedule from './editschedule';
     return calendar;
   };
 
-  const onFilter = (isFilter) => {
-    // dispatch(setIsFilter(isFilter));
-  };
-
-  // // ======================================================== rest api 받아오기 ========================================================
-  // const [data, setData] = useState(null);
-  
-  // useEffect(() => {
-  //   const checkEmail = async () => {
-  //     const payload = { check: "use3311@email.com" };
-      
-  //     try {
-  //       const response = await axios.post('http://13.209.16.226:8080/api/auth/emailCheck', payload);
-  //       console.log(response.data); 
-  //       setData(response.data); // 응답 데이터를 state 변수에 저장
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
-  //   checkEmail();
-  // }, []); // 빈 배열을 dependency로 전달하여 마운트 시 한 번만 실행되도록 함
-  // console.log(data);
-
   return (
     <div>
       <CalHeader>
@@ -188,20 +127,7 @@ import EditSchedule from './editschedule';
         <SetImg src={'img/setting.png'}></SetImg>
       </CalHeader>
       <CalendarWrapper>
-          {/* Button to open the popup */}
-        {/* <button onClick={openPopup}>Open Popup</button> */}
-
-        {/* Button to close the popup (this could be inside EditSchedule component) */}
-        {/* {isOpenEditPopup && <button onClick={closePopup}>Close Popup</button>} */}
-        {/* {isOpenEditPopup && <EditSchedule />} */}
-        {isOpenEditPopup && (
-        <ModalWrapper>
-          <ModalOverlay onClick={openPopup} />
-          <ModalContent>
-            <EditSchedule onClose={openPopup} />
-          </ModalContent>
-        </ModalWrapper>
-      )}
+        {isOpenEditPopup && <EditSchedule />}
         <Header>
           <MdChevronLeft
             className="dir"
@@ -240,22 +166,10 @@ import EditSchedule from './editschedule';
           {generate()}
         </DateContainer>
       </CalendarWrapper>
-      <ButtonWrapper onClick={handleButtonClick}
-        // onClick={() => {
-          // dispatch(openEditPopup(false));
-        // }}
-      >
-        {/* {isFilter ? (
-          <MdCheck
-            onClick={() => onFilter(false)}
-            className={'filterBtn subBtn'}
-          />
-        ) : (
-          <MdDoneAll
-            onClick={() => onFilter(true)}
-            className={'filterBtn subBtn'}
-          />
-        )} */}
+      <ButtonWrapper
+        onClick={() => {
+          dispatch(openEditPopup(false));
+      }}>
         <MdEdit onClick={goToAddSchedule} className={'writeBtn subBtn'} />
         <MdDehaze className={'menuBtn'} />
       </ButtonWrapper>

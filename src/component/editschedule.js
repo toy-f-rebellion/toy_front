@@ -3,26 +3,16 @@ import styled from 'styled-components';
 import { MdChevronLeft } from 'react-icons/md';
 import Datepicker from './datepicker';
 import { Button, TextField, makeStyles, ButtonGroup } from '@material-ui/core';
-// import { useDispatch, useSelector } from 'react-redux';
-// import {
-//   deleteSchedule,
-//   openEditPopup,
-//   updateSchedule
-// } from './schedule';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  deleteSchedule,
+  openEditPopup,
+  updateSchedule
+} from './redux/modules/schedule';
 
-// const EditSchedule = ({ history }) => {
-const EditSchedule = () => {
-  // const dispatch = useDispatch();
-  // const { currentSchedule } = useSelector((state) => state.schedule);
-
-  // Dummy data for currentSchedule
-  const currentSchedule = {
-    id: 1,
-    date: "20230901",
-    time: "1000",
-    title: "Event1",
-    description: "This is event1"
-  };
+const EditSchedule = ({ history }) => {
+  const dispatch = useDispatch();
+  const { currentSchedule } = useSelector((state) => state.schedule);
 
   const d = currentSchedule.date;
   const t = currentSchedule.time;
@@ -67,8 +57,8 @@ const EditSchedule = () => {
         id: currentSchedule.id
       };
 
-      // dispatch(updateSchedule(data));
-      // dispatch(openEditPopup(false));
+      dispatch(updateSchedule(data));
+      dispatch(openEditPopup(false));
     }
   };
 
@@ -85,13 +75,13 @@ const EditSchedule = () => {
 
   const onComplete = () => {
     const data = { ...currentSchedule, completed: true };
-    // dispatch(openEditPopup(false));
-    // dispatch(updateSchedule(data));
+    dispatch(openEditPopup(false));
+    dispatch(updateSchedule(data));
   };
 
   const onDelete = () => {
-    // dispatch(openEditPopup(false));
-    // dispatch(deleteSchedule(currentSchedule.id));
+    dispatch(openEditPopup(false));
+    dispatch(deleteSchedule(currentSchedule.id));
   };
 
   return (
@@ -99,7 +89,7 @@ const EditSchedule = () => {
       <Header>
         <MdChevronLeft
           onClick={() => {
-            // dispatch(openEditPopup(false));
+            dispatch(openEditPopup(false));
           }}
         />
         일정 보기 &nbsp;&nbsp;&nbsp;
@@ -107,16 +97,7 @@ const EditSchedule = () => {
       </Header>
       <Body>
         <Datepicker setDate={setDate} date={date} />
-        <select defaultValue={currentSchedule.title}>
-            <option value="행복">행복</option>
-            <option value="중립">중립</option>
-            <option value="슬픔">슬픔</option>
-            <option value="분노">분노</option>
-            <option value="놀람">놀람</option>
-            <option value="싫음">싫음</option>
-            <option value="두려움">두려움</option>
-          </select>
-        {/* <TextField
+        <TextField
           id="standard-basic"
           label="어떤 일정이 있나요?"
           defaultValue={currentSchedule.title}
@@ -126,7 +107,7 @@ const EditSchedule = () => {
           onChange={(e) => {
             //setTitle(e.target.value);
           }}
-        /> */}
+        />
         <TextField
           id="outlined-multiline-static"
           label="간단 메모"

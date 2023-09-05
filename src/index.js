@@ -5,28 +5,24 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import store from './component/configstore';
+import store from './component/redux/configstore';
 import { hydrate, render } from 'react-dom';
 
-// const rootElement = document.getElementById('root');
-// if (rootElement.hasChildNodes()) {
-//   <Provider store={store}>
-//     hydrate(<App />, rootElement);
-//   </Provider>
-// } else {
-//   <Provider store={store}>
-//     render(<App />, rootElement);
-//   </Provider>
-// }
+const rootElement = document.getElementById('root');
+if (rootElement.hasChildNodes()) {
+    hydrate(<Provider store={store}><App /></Provider>, rootElement);
+} else {
+    render(<Provider store={store}><App /></Provider>, rootElement);
+}
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-    <React.StrictMode>
-      <Provider store={store}>
-        <App />
-      </Provider>
-    </React.StrictMode>
-);
+// const root = ReactDOM.createRoot(document.getElementById('root'));
+// root.render(
+//     <React.StrictMode>
+//       <Provider store={store}>
+//         <App />
+//       </Provider>
+//     </React.StrictMode>
+// );
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

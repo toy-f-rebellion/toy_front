@@ -1,5 +1,5 @@
 import { createReducer, createAction } from '@reduxjs/toolkit';
-import { firestore } from './firebase';
+import { firestore } from '../../firebase';
 
 const db = firestore.collection('schedule');
 

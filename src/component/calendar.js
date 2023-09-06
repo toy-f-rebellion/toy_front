@@ -37,15 +37,6 @@ import EditSchedule from './editschedule';
   const { thisMonth, isOpenEditPopup, isFilter } = useSelector(
     (state) => state.schedule
   );
-  
-  const [isEditPopupOpen, setEditPopupOpen] = useState(false);
-
-  // Dummy reducer
-  // const thisMonth = [
-  //   { id: 1, date: "20230901", title: "Event1", description: "This is event1" },
-  //   { id: 2, date: "20230902", title: "Event2", description: "This is event2" },
-  // ];
-
   const [current, setCurrent] = useState(moment());
 
   const dispatch = useDispatch();

@@ -42,8 +42,10 @@ const Login = () => {
     console.log('Sign up button clicked'); // 클릭 시 콘솔에 메시지 출력
   };
 
+
+  // ================================ rest api로 통신하기 ==================================== 
+
   const [data, setData] = useState(null);
-  const [UserData,setUserData] = useState();
   const [token, setToken] = useState(null);
   
   useEffect(() => {
@@ -63,21 +65,9 @@ const Login = () => {
       }
     };
     checkEmail();
-    
 
-    // axios.get("/api/diary/view?addDate=2023-01-01")
-    // .then(function (response) {
-    //     // response  
-    //     console.log(response.diaryDetail);
-    //     setUserData(response.data.data); // 이 부분이 누락되어 있어서 추가했습니다.
-    // }).catch(function (error) {
-    //     // 오류발생시 실행
-    // }).then(function() {
-    //     // 항상 실행
-    // });
   }, []); // 빈 배열을 dependency로 전달하여 마운트 시 한 번만 실행되도록 함
   console.log(data);
-  console.log(UserData);
 
   useEffect(() => {
     if (!token) return; // If there's no token yet, don't do anything

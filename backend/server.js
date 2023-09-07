@@ -41,9 +41,9 @@ app.post('/initialize', (req, res) => {
 // GPT 대화
 app.post('/ask', async (req, res) => {
   console.log('ask_OK')
-  const question = req.body.question;
+  const question = req.body.sendtext;
   MESSAGES.push({ role: "user", content: question });
-
+  console.log(MESSAGES)
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -57,9 +57,8 @@ app.post('/ask', async (req, res) => {
   });
   
   const data = await response.json();
-  
   let answer = data.choices[0].message.content;
-  
+  console.log(answer)
   let return_GPT = {role : "assistant", content : answer}
   
   MESSAGES.push(return_GPT);

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { FaUserCircle } from "react-icons/fa";
 import axios from 'axios';
 import {Link, useNavigate} from 'react-router-dom';
 import moment from 'moment';
@@ -31,8 +32,21 @@ import {
 } from './redux/modules/schedule';
 import Day from './day';
 import EditSchedule from './editschedule';
+import { useCookies } from 'react-cookie';
 
   const Calendar = () => {
+    const [cookies] = useCookies(['token']);
+
+    useEffect(() => {
+      // Log the token to console
+      console.log(cookies.token);
+  
+      if(!cookies.token) {
+        // If there is no token in the cookies, redirect to login page
+        window.location.href = "/login";
+      }
+    }, []);
+  
 
   const { thisMonth, isOpenEditPopup, isFilter } = useSelector(
     (state) => state.schedule
@@ -115,7 +129,9 @@ import EditSchedule from './editschedule';
     <div>
       <CalHeader>
         <LogoImg src={'img/logo.png'}></LogoImg>
-        <SetImg src={'img/setting.png'}></SetImg>
+        {/* <SetImg src={'img/setting.png'}></SetImg> */}
+        <FaUserCircle size="50" color="#FCC21B"/> 
+        
       </CalHeader>
       <CalendarWrapper>
         {isOpenEditPopup && <EditSchedule />}
@@ -167,31 +183,4 @@ import EditSchedule from './editschedule';
     </div>
   );
 };
-
-const ModalWrapper = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width:100%;
-   height:100%;
-   display:flex;
-   justify-content:center;
-   align-items:center;
-`;
-
-const ModalOverlay = styled.div`
-   position:absolute;
-   top:0px;
-   left:0px; 
-   width:100%;
-   height:100%;
-   background-color:black; 
-   opacity:.5; 
-`;
-
-const ModalContent = styled.div`
-    background-color:white; 
-    padding :20px; 
-`;
-
 export default Calendar;

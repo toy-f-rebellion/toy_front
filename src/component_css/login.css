@@ -94,6 +94,21 @@
     border: 0.125rem solid var(--primary-color);
 }
 
+.gender-group{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 20px 0;
+}
+
+.gender-group div{
+    margin: 0 30px;
+}
+
+.gender-group div label{
+    margin: 0 10px;
+}
+
 .form button {
     cursor: pointer;
     width: 100%;
@@ -310,7 +325,7 @@
         width: 100%;
         position: absolute;
         padding: 2rem;
-        background-color: var(--white);
+        background-color: var(—white);
         border-top-left-radius: 2rem;
         border-top-right-radius: 2rem;
         transform: translateY(100%);

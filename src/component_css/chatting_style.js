@@ -75,14 +75,29 @@ export const ChattingSendWrapper = styled.div`
 export const ChattingInput = styled.input`
     position: fixed;
     bottom: 3%;
-    right:10%;
-    width: 65%;
+    right:15%;
+    width: 60%;
     height: 6%;
     text-align: left;
     border-radius: 10px;
     border: solid 3px #FCC21B;
     padding: 2px 10px;
     color: black;
+`;
+
+export const ChattingIcon = styled.div`
+    position: fixed;
+    display: flex;
+    bottom: 3%;
+    right:8%;
+`;
+
+export const ChattingMic = styled.div`
+    margin: 8px;
+`;
+
+export const ChattingSpeaker = styled.div`
+    margin: 8px;
 `;
 
 export const ChattingBtn = styled.button`

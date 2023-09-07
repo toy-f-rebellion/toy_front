@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 import { STT } from '../Speech-To-Text';
 import { TTS } from '../Text-To-Speech';
 import { useNavigate } from 'react-router-dom';
 // import { IonIcon } from '@ionic/react'; // Import IonIcon from the ionicons
+import { FaMicrophone } from "react-icons/fa";
+import { BsFillVolumeUpFill } from "react-icons/bs";
 import {Link} from 'react-router-dom';
 import '../component_css/chatting.css';
 import {
@@ -17,16 +20,34 @@ import {
     ChattingUserProfile,
     ChattingSendWrapper,
     ChattingInput,
+    ChattingIcon,
+    ChattingMic,
+    ChattingSpeaker,
     ChattingBtn,
 } from './../component_css/chatting_style';
 
 const Chatting = () => {
     const [name, setName] = useState("");
-    const [sendtext, setSendText] = useState("");
+    const [sendtext, setSendText] = useState(""); // 질문 변수
+    const [answer, setAnswer] = useState(''); // 답변 변수
     const [isMessageVisible, setIsMessageVisible] = useState(false); // Add state for controlling visibility
     const [messages, setMessages] = useState([]); // Store messages in an array
 
     const chatContentRef = useRef(null); // Create a ref for chat content
+
+
+    useEffect(() => {
+        // This function runs when the component mounts
+        const initializeConversation= async () => {
+          try{
+            await axios.post('http://localhost:3001/initialize');
+            setAnswer('');
+          }catch(error){
+            console.error(error);
+          }
+        };
+        initializeConversation();
+      }, []);  // Empty dependency array means this effect runs once on mount
 
     useEffect(() => {
         // Scroll chat content to the bottom whenever messages change
@@ -39,12 +60,19 @@ const Chatting = () => {
         setSendText(e.target.value);
     }
 
-    const onClick = () => {
-        if (sendtext.trim() !== "") { // Only send if there's non-empty text
+    const onClick = async () => {
+        try{
+            const res = await axios.post('http://localhost:3001/ask', {sendtext});
+            setAnswer(res.data.answer);
+          } catch(error){
+            console.error(error);
+        }
+          
+        if (sendtext.trim() !== "") { // 입력창이 비어있지 않으면 전송한다.
             setName((sendtext));
             setMessages([...messages, sendtext]); // Add new message to the messages array
-            setIsMessageVisible(true); // Show message and user profile after clicking send
-            setSendText(""); // Clear the input field
+            setIsMessageVisible(true); // 클릭이후에 메세지와 프로필 사진이 보이게 한다.
+            setSendText(""); // 인풋창 초기화
             console.log(name)
         }
     }
@@ -60,12 +88,13 @@ const Chatting = () => {
 
     const handleRecordClick = () => {
         if (isRecording) {
-            // 처리할 로직: 녹음 중지 등
+            stopListening();
         } else {
-            // 처리할 로직: 녹음 시작 등
+            startListening();
         }
         setIsRecording(!isRecording);
     };
+
 
     const navigate = useNavigate();
 
@@ -76,11 +105,22 @@ const Chatting = () => {
         stopListening,
         resetTranscript
       } = STT();
-    
+
+      useEffect(() => {
+        setSendText(transcript);
+      }, [transcript]);
+      
       const { text, 
         handleTextChange, 
         playTTS 
       } = TTS();
+
+      const playMessage = (message) => {
+        // Modify playTTS to accept a message parameter
+        handleTextChange({ target: { value: message } }); // set the text to the current message
+        playTTS(); // play the TTS with the current message
+      };
+
     return (
         <>         
             <ChattingWrapper>
@@ -92,39 +132,27 @@ const Chatting = () => {
                         }}>나가기</ChattingSideExit>
                 </ChattingSideLay>
                 <ChattingContent>
-                    <div>
-                        <p>Microphone: {listening ? 'on' : 'off'}</p>
-                        <button onClick={startListening}>Start</button>
-                        <button onClick={stopListening}>Stop</button>
-                        <button onClick={resetTranscript}>Reset</button>
-                        <p>{transcript}</p>
-                        <div className="TextToSpeech">
-                        <input
-                            type="text"
-                            value={text}
-                            onChange={handleTextChange}
-                            placeholder="텍스트를 입력하세요"
-                        />
-                        <button onClick={playTTS}>음성으로 변환</button>
-                        </div>
-                    </div>
                     {isMessageVisible && ( // Render only when isMessageVisible is true
                         <ChattingContentLay ref={chatContentRef}>
                             {messages.map((message, index) => (
                                 <ChattingUserWrapper key={index}>
-                                    <ChattingUserMsg>{message}</ChattingUserMsg>
+                                    <ChattingSpeaker onClick={() => playMessage(message)}>
+                                        <BsFillVolumeUpFill size="40" color="#FCC21B"/> 
+                                    </ChattingSpeaker>
+                                    <ChattingUserMsg onChange={handleTextChange}>{message}</ChattingUserMsg>
                                     <ChattingUserProfile src={'img/userprofile.png'}></ChattingUserProfile>
                                 </ChattingUserWrapper>
                             ))}
+                            <p>{answer}</p>
                         </ChattingContentLay>
                     )}
                     <ChattingSendWrapper>
-                        <ChattingInput type='text' name='test' value={sendtext} onChange={onChange} onKeyPress={handleKeyPress}>
-                        </ChattingInput>
-                        <div>
-                            {/* <IonIcon name="mic-circle-outline" className={`rpg_record_icon ${isRecording ? 'recording' : ''}`} id="record" onClick={handleRecordClick}></IonIcon> */}
-                            {/* <span>말을 다 하셨다면 한번 더 클릭해주세요</span> */}
-                        </div>
+                        <ChattingInput type='text' name='test' value={sendtext} onChange={onChange} onKeyPress={handleKeyPress}></ChattingInput>
+                        <ChattingIcon>
+                            <ChattingMic onClick={handleRecordClick}>
+                                <FaMicrophone margin="10" size="40" color="#FCC21B"/>
+                            </ChattingMic> 
+                        </ChattingIcon>
                         <ChattingBtn onClick={onClick}>전송</ChattingBtn>
                     </ChattingSendWrapper>
                 </ChattingContent>

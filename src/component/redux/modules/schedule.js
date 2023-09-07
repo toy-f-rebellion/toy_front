@@ -1,5 +1,7 @@
 import { createReducer, createAction } from '@reduxjs/toolkit';
+import { useState, useEffect, useContext } from 'react';
 import { firestore } from '../../firebase';
+import axios from 'axios';
 
 const db = firestore.collection('schedule');
 
@@ -22,6 +24,7 @@ export const setCurrentSchedule = createAction('SET_CURRENT_SCHEDULE');
 export const setIsFilter = createAction('SET_IS_FILITER');
 
 const schedule = createReducer(initialState, {
+
   [fetchFullSchedule]: (state, { payload }) => {
     state.fullSchedule = payload.fullList;
     state.thisMonthSchedule = payload.thisMonthSchedule;
@@ -95,8 +98,9 @@ const schedule = createReducer(initialState, {
 });
 
 // thunk
-export const createSchedule = (data) => {
-  return (dispatch) => {
+
+export const createSchedule = (data, token) => {
+  return async(dispatch) => {
     const saveData = { ...data, completed: false };
     db.add(saveData).then((docRef) => {
       console.log("Document reference:", docRef);
@@ -106,11 +110,22 @@ export const createSchedule = (data) => {
     .catch((error) => {
       console.error("Error adding schedule:", error);
     });
+
+    // try {
+    //   let saveData ={ ...data, completed:false };
+    //   const response = await axios.post('http://13.209.16.226:8080/api/diary/create', saveData,{
+    //     headers: { Authorization: `Bearer ${token}` }
+    //   });
+    //   let schedule={...saveData,id : response.data.id};
+    //   dispatch(addSchedule(schedule));
+    // } catch(error){
+    //   console.error("Error adding schedule:", error);
+    // }
   };
 };
 
 export const readSchedule = ({ startDay, endDay }) => {
-  return (dispatch) => {
+  return async(dispatch) => {
     db.get().then((docs) => {
       let fullList = [];
       docs.forEach((doc) => {
@@ -120,6 +135,37 @@ export const readSchedule = ({ startDay, endDay }) => {
         }
       });
 
+
+    // let fullList, thisMonthSchedule = []; 
+    // let fullList = [{
+    //   "addDate": "2023-09-01",
+    //   "diaryDetail": "제발 나의 응답에 답해줘 ㅜㅜ",
+    //   "emotion": "기쁨"}];
+    // const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2UzMzExQGVtYWlsLmNvbSIsImlhdCI6MTY5Mzg4Mzg5OCwiZXhwIjoxNjkzODg3NDk4fQ.JSiHfSYUbhF1ucfZj8pFOM5rEF6BEL4_c1wqZN0ojs8MmCAnVMteRKNpotdK0tvpqo3JvZrRyv7j3TfRP5CRIg';
+    //   try {
+    //     const response = await axios.get('http://13.209.16.226:8080/api/diary/view?addDate=2023-09-01', {
+    //     headers: { Authorization: `Bearer ${token}` }
+    //   });
+    //   fullList = response.data;
+
+    //   thisMonthSchedule = fullList.filter((sc, idx) => {
+    //     return (
+    //       parseInt(sc.date) >= parseInt(startDay) &&
+    //       parseInt(sc.date) <= parseInt(endDay)
+    //     );
+    //   });
+      
+    //   console.log(fullList);
+    //   console.log(thisMonthSchedule);
+    // } catch(error){
+    //   console.error("Error fetching data:", error);
+    // }
+
+
+    // axios.get('http://13.209.16.226:8080/api/diary/view')
+    // .then((response) => {
+    //   let fullList = response.data;
+
       const thisMonthSchedule = fullList.filter((sc, idx) => {
         return (
           parseInt(sc.date) >= parseInt(startDay) &&
@@ -128,6 +174,7 @@ export const readSchedule = ({ startDay, endDay }) => {
       });
 
       dispatch(fetchFullSchedule({ fullList, thisMonthSchedule }));
+      // dispatch(fetchFullSchedule({ fullList }));
     });
   };
 };
@@ -139,6 +186,10 @@ export const updateSchedule = (data) => {
       .then((docRef) => {
         dispatch(editSchedule(data));
       });
+    // axios.put(`/api/schedule/${data.id}`, data)
+    // .then(() => {
+    //   dispatch(editSchedule(data));
+    // });
   };
 };
 
@@ -152,6 +203,13 @@ export const deleteSchedule = (id) => {
       .catch((err) => {
         console.log(err);
       });
+  //   axios.delete(`/api/schedule/${id}`)
+  //   .then(() => {
+  //     dispatch(removeSchedule(id));
+  //   })
+  //   .catch((err) => { 
+  //     console.log(err);
+  //  });
   };
 };
 

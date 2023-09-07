@@ -17,7 +17,7 @@ export const SetImg = styled.img`
 export const ButtonWrapper = styled.div`
 position: absolute;
 left: 90vw;
-top: 60vh;
+top: 70vh;
 text-align: center;
 padding-bottom: 3px;
 display: flex;

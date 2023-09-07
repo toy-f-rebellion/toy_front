@@ -1,6 +1,9 @@
 import {Link} from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
+import { useCookies } from 'react-cookie';
+// import Cookies from 'js-cookie';
 import '../component_css/login.css';
 import {
     LoginWrapper,
@@ -42,85 +45,93 @@ const Login = () => {
     console.log('Sign up button clicked'); // 클릭 시 콘솔에 메시지 출력
   };
 
-  const [data, setData] = useState(null);
-  const [UserData,setUserData] = useState();
-  const [token, setToken] = useState(null);
-  
-  useEffect(() => {
-    const checkEmail = async () => {
-      const payload = { 
-        userEmail: "use3311@email.com",
-        userPassword: "user1password"
-       };
-      
-      try {
-        const response = await axios.post('http://13.209.16.226:8080/api/auth/signIn', payload);
-        console.log(response.data); 
-        setData(response.data); // 응답 데이터를 state 변수에 저장
-        setToken(response.data.data.token); // Save the token to state
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    checkEmail();
-    
+// ================================= 회워가입 =================================
 
-    // axios.get("/api/diary/view?addDate=2023-01-01")
-    // .then(function (response) {
-    //     // response  
-    //     console.log(response.diaryDetail);
-    //     setUserData(response.data.data); // 이 부분이 누락되어 있어서 추가했습니다.
-    // }).catch(function (error) {
-    //     // 오류발생시 실행
-    // }).then(function() {
-    //     // 항상 실행
-    // });
-  }, []); // 빈 배열을 dependency로 전달하여 마운트 시 한 번만 실행되도록 함
-  console.log(data);
-  console.log(UserData);
+  const [name, setName] = useState("");
+  const [nickname, setNickname] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [phoneNum, setPhoneNum] = useState("");
+  const [birthDate, setBirthDate] = useState(null);
+  const [gender, setGender] = useState("");
 
-  useEffect(() => {
-    if (!token) return; // If there's no token yet, don't do anything
+  const signupSubmit = async (e)=>{
+    e.preventDefault();
+    // Check if any field is empty
+    // if(name === "" || nickname === "" || email === "" || password === "" || confirmPassword === "" || phoneNum === "" || birthDate == null || gender === "") {
+    //   alert("모든 필드를 채워주세요.");
+    //   return;
+    // }
 
-    const fetchData = async () => {
-      try{
-        const response = await axios.get('http://13.209.16.226:8080/api/diary/view?addDate=2023-01-01', {
-          headers: { Authorization: `Bearer ${token}` } // Use the token here
-        });
+    if(password!==confirmPassword){
+        alert("비밀번호가 일치하지 않습니다.")
+        return;
+    }
+    try{
+        let res=await axios.post('http://3.36.100.202:8080/api/auth/signUp',{
+            name,
+            nickname,
+            email,
+            password,
+            phoneNum,
+            birthDate,
+            gender
+        })
+        console.log(res.data);
+        // Clear the input fields after successful submission
+        setName("");
+        setNickname("");
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+        setPhoneNum("");
+        setBirthDate(null);
+        setGender("");
+
+        // Check if the request was successful
+        if(res.status === 200) { 
+          window.location.reload();
+        }
+
+    }catch(err){
+        console.error(err);
+    }
+}
+
+// ================================= 로그인 =================================
+const [loginemail, setloginEmail] = useState("");
+const [loginpassword, setloginPassword] = useState("");
+
+let navigate = useNavigate();
+
+// Initialize cookie hook
+const [cookies, setCookie] = useCookies(['token']);
+
+const signinSubmit=async (e)=>{
+  e.preventDefault();
+  try{
+      let res=await axios.post('http://3.36.100.202:8080/api/auth/signIn',{
+          userEmail: loginemail,
+          userPassword: loginpassword
+      })
+      console.log(res.data);
+
+      // Check if the request was successful
+      if(res.status === 200) {
+        // Save the token to a cookie
+        setCookie('token', res.data.token);
+
+        // Save the token to a cookie
+        // Cookies.set('token', res.data.token);
         
-        console.log(response.data);
-      } catch (error) {
-         console.error("Error fetching data: ", error);
-       }
-     };
-     
-     fetchData();
-   }, [token]); // Run this effect whenever the token changes
-
-
-  // ================================ 메세지 전송 코드 ==================================== 
-  //  useEffect(() => {
-  //   if (!token) return; // If there's no token yet, don't do anything
-  //   const sendData = async () => {
-  //     try{
-  //       const payload = { 
-  //         diaryDetail: "메세지 전송 성공~!",
-  //         addDate: "2023-07-01"
-  //        };
-
-  //        // Replace 'http://your-api-url' with your actual API endpoint
-  //        const response = await axios.post('http://13.209.16.226:8080/api/diary/create', payload ,{
-  //          headers: { Authorization: `Bearer ${token}` } // Use the token here
-  //        });
-        
-  //        console.log(response.data);
-  //      } catch (error) {
-  //         console.error("Error sending data: ", error);
-  //      }
-  //    };
-     
-  //    sendData();
-  //  }, [token]); // Run this effect whenever the token changes
+        // Navigate to /calendar page
+        navigate("/calendar");
+}
+  }catch(err){
+      console.error(err);
+  }
+}
 
   return (
     <div className="login">
@@ -131,39 +142,49 @@ const Login = () => {
               <div className="form-wrapper align-items-center">
                 <div className="form sign-up">
                 <LoginTitle src={'img/logo.png'}></LoginTitle>
+                <form onSubmit={signupSubmit}>
                   <div className="input-group">
                     <i className="bx bxs-user"></i>
-                    <input type="text" placeholder="이름" />
+                    <input type="text" placeholder="이름" onChange={e => setName(e.target.value)}/>
+                  </div>
+                  <div className="input-group">
+                    <i className="bx bxs-user"></i>
+                    <input type="text" placeholder="닉네임" onChange={e => setNickname(e.target.value)}/>
                   </div>
                   <div className="input-group">
                     <i className="bx bx-mail-send"></i>
-                    <input type="email" placeholder="이메일" />
+                    <input type="email" placeholder="이메일" onChange={e => setEmail(e.target.value)} />
                   </div>
                   <div className="input-group">
                     <i className="bx bxs-lock-alt"></i>
-                    <input type="password" placeholder="비밀번호" />
+                    <input type="password" placeholder="비밀번호" onChange={e=>setPassword(e.target.value)}/>
                   </div>
                   <div className="input-group">
                     <i className="bx bxs-lock-alt"></i>
-                    <input type="password" placeholder="비밀번호 확인" />
+                    <input type="password" placeholder="비밀번호 확인" onChange={e=>setConfirmPassword(e.target.value)}/>
                   </div>
                   <div className="input-group">
                     <i className="bx bxs-lock-alt"></i>
-                    <input type="tel" placeholder="전화번호" />
+                    <input type="tel" placeholder="전화번호" onchange ={ e=>setPhoneNum ( e.target.value )}/>
                   </div>
                   <div className="input-group">
                     <i className="bx bxs-lock-alt"></i>
-                    <input type="date" placeholder="생일" />
+                    <input type="date" placeholder="생일" onchange ={ e=>setBirthDate ( e.target.value )}/>
                   </div>
-                  <div className="input-group">
+                  <div className="gender-group">
                     <i className="bx bxs-lock-alt"></i>
-                    <label for="male">남성</label>
-                    <input type="radio" name="gender" id="male" />
-                    <label for="female">여성</label>
-                    <input type="radio" name="gender" id="female" />
+                    <div>
+                      <label for="male">남성</label>
+                      <input type="radio" name="gender" id="male" onchange ={()=>setGender('남성')}/>
+                    </div>
+                    <div>
+                      <label for="female">여성</label>
+                      <input type="radio" name="gender" id="female" onChange={()=>setGender('여성')}/>
+                    </div>
                   </div>
 
-                    <button onClick={handleSignUpClick}>Sign up</button>
+                  <button onClick={handleSignUpClick}>Sign up</button>
+                </form>
                   <p>
                     <span>Already have an account?</span>
                     <b onClick={handleToggle} className="pointer">
@@ -177,17 +198,19 @@ const Login = () => {
               <div className="form-wrapper align-items-center">
                 <div className="form sign-in">
                 <LoginTitle src={'img/logo.png'}></LoginTitle>
+                <form onSubmit={signinSubmit}>
                   <div className="input-group">
                     <i className="bx bxs-user"></i>
-                    <input type="email" placeholder="이메일" />
+                    <input type="email" placeholder="이메일" onChange={e => setloginEmail(e.target.value)}/>
                   </div>
                   <div className="input-group">
                     <i className="bx bxs-lock-alt"></i>
-                    <input type="password" placeholder="비밀번호" />
+                    <input type="password" placeholder="비밀번호" onChange={e=>setloginPassword(e.target.value)}/>
                   </div>
-                  <Link to={"/calendar"} style={{ textDecoration: 'none' }}>
+                  {/* <Link to={"/calendar"} style={{ textDecoration: 'none' }}> */}
                     <button>Sign in</button>
-                  </Link>
+                  {/* </Link> */}
+                </form>
                   <SocialContent>
                         <GoogleBtn src={'img/google.png'}></GoogleBtn>
                         <NaverBtn src={'img/naver.png'}></NaverBtn>

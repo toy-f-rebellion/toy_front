@@ -59,16 +59,17 @@ const Chatting = () => {
     const onChange = (e) => {
         setSendText(e.target.value);
     }
-
-    const onClick = async () => {
+    const askQuestion= async () => {
         try{
-            const res = await axios.post('http://localhost:3001/ask', {sendtext});
-            setAnswer(res.data.answer);
-          } catch(error){
-            console.error(error);
+          const res=await axios.post('http://localhost:3001/ask', {sendtext});
+          setAnswer(res.data.answer);
+        }catch(error){
+          console.error(error);
         }
-          
+      };
+    const onClick = async () => {
         if (sendtext.trim() !== "") { // 입력창이 비어있지 않으면 전송한다.
+            askQuestion();
             setName((sendtext));
             setMessages([...messages, sendtext]); // Add new message to the messages array
             setIsMessageVisible(true); // 클릭이후에 메세지와 프로필 사진이 보이게 한다.

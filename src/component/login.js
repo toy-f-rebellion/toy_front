@@ -45,7 +45,7 @@ const Login = () => {
     console.log('Sign up button clicked'); // 클릭 시 콘솔에 메시지 출력
   };
 
-// ================================= 회워가입 =================================
+// ================================= 회원가입 =================================
 
   const [name, setName] = useState("");
   const [nickname, setNickname] = useState("");

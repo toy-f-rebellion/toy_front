@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { useCookies } from 'react-cookie';
 import { useRecoilState } from 'recoil';
-import { userState } from "./recoil";
+import {userState} from "./recoil"
 // import Cookies from 'js-cookie';
 import '../component_css/login.css';
 import {
@@ -93,19 +93,8 @@ const Login = () => {
 
         // Check if the request was successful
         if(res.status === 200) { 
-          console.log(name, nickname, email, password, confirmPassword, phoneNum, birthDate, gender)
-          // window.location.reload();
+          window.location.reload();
         }
-        // const responseData = res.data;
-        // if (!responseData.result) {
-        //   console.log('회원가입에 실패했습니다.')
-        //   alert('회원가입에 실패했습니다.');
-        //   return;
-        // }
-        // else{
-        //   window.location.reload();
-        //   console.log(res.data)
-        // }
 
     }catch(err){
         console.error(err);
@@ -114,11 +103,13 @@ const Login = () => {
 
 // ================================= 로그인 =================================
 const [loginemail, setloginEmail] = useState("");
-const [loginpassword, setloginPassword] = useState("");
-const [cookies, setCookie] = useCookies();
+const [loginpassword, setloginPassword] =  useState("");
 const [user, setUser] = useRecoilState(userState);
 
 let navigate = useNavigate();
+
+// Initialize cookie hook
+const [cookies, setCookie] = useCookies(['token']);
 
 const signinSubmit=async (e)=>{
   e.preventDefault();
@@ -127,30 +118,27 @@ const signinSubmit=async (e)=>{
     return;
   }
   try{
-      let res=await axios.post('http://3.36.100.202:8080/api/auth/signIn',{
+      let res=await axios
+      .post('http://3.36.100.202:8080/api/auth/signIn',{
           userEmail: loginemail,
           userPassword: loginpassword
       })
-      console.log(res.data);
-      const responseData = res.data;
-      if (!responseData.result) {
-        console.log('로그인에 실패했습니다.')
-        alert('로그인에 실패했습니다.');
-        return;
-      }
-      else{
-        console.log(res.data);
-        const { token, exprTime } = responseData.data;
-        const expires = new Date();
-        expires.setMilliseconds(expires.getMilliseconds() + exprTime);
+      // console.log(res.data);
 
-        setCookie('token', token, { expires });
+      // Check if the request was successful
+      if(res.status === 200) {
+        // Save the token to a cookie
+        setCookie('token', res.data.token);
         setUser(res.data.data.user);
+        // Save the token to a cookie
+        // Cookies.set('token', res.data.token);
+        
+        // Navigate to /calendar page
         navigate("/calendar");
-        // setUser(res.data.data.user);
-      }
+}
   }catch(err){
       console.error(err);
+      alert('로그인에 실패했습니다.');
   }
 }
 
@@ -159,6 +147,7 @@ const signinSubmit=async (e)=>{
       <div className="login_wrapper">
         <div id="container" className={`container ${isSignIn ? 'sign-in' : 'sign-up'}`}>
           <div className="login_row">
+            {/* ===================================== 회원가입 ===================================== */}
             <div className="login_col align-items-center flex-col sign-up">
               <div className="form-wrapper align-items-center">
                 <div className="form sign-up">
@@ -186,17 +175,17 @@ const signinSubmit=async (e)=>{
                   </div>
                   <div className="input-group">
                     <i className="bx bxs-lock-alt"></i>
-                    <input type="text" placeholder="전화번호" onChange ={e=>setPhoneNum (e.target.value)}/>
+                    <input type="tel" placeholder="전화번호" onchange ={ e=>setPhoneNum ( e.target.value )}/>
                   </div>
                   <div className="input-group">
                     <i className="bx bxs-lock-alt"></i>
-                    <input type="date" placeholder="생일" onChange ={ e=>setBirthDate ( e.target.value )}/>
+                    <input type="date" placeholder="생일" onchange ={ e=>setBirthDate ( e.target.value )}/>
                   </div>
                   <div className="gender-group">
                     <i className="bx bxs-lock-alt"></i>
                     <div>
                       <label for="male">남성</label>
-                      <input type="radio" name="gender" id="male" onChange ={()=>setGender('남성')}/>
+                      <input type="radio" name="gender" id="male" onchange ={()=>setGender('남성')}/>
                     </div>
                     <div>
                       <label for="female">여성</label>
@@ -215,6 +204,7 @@ const signinSubmit=async (e)=>{
                 </div>
               </div>
             </div>
+            {/* ===================================== 회원가입 ===================================== */}
             <div className="login_col align-items-center flex-col sign-in">
               <div className="form-wrapper align-items-center">
                 <div className="form sign-in">

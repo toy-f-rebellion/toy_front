@@ -5,6 +5,8 @@ import {Link, useNavigate} from 'react-router-dom';
 import moment from 'moment';
 import 'moment/locale/ko';
 import styled from 'styled-components';
+import { userState } from "./recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
   CalHeader,
   LogoImg,
@@ -35,14 +37,18 @@ import EditSchedule from './editschedule';
 import { useCookies } from 'react-cookie';
 
   const Calendar = () => {
-    const [cookies] = useCookies(['token']);
+    // const [cookies] = useCookies(['token']);
 
     useEffect(() => {
       // Log the token to console
-      console.log(cookies.token);
+      // console.log(cookies.token);
   
-      if(!cookies.token) {
-        // If there is no token in the cookies, redirect to login page
+      // if(!cookies.token) {
+      //   // If there is no token in the cookies, redirect to login page
+      //   window.location.href = "/login";
+      // }
+      console.log(user)
+      if(user===null){
         window.location.href = "/login";
       }
     }, []);
@@ -124,12 +130,19 @@ import { useCookies } from 'react-cookie';
     }
     return calendar;
   };
-
+  const [user, setUser] = useRecoilState(userState);
   return (
     <div>
       <CalHeader>
         <LogoImg src={'img/logo.png'}></LogoImg>
         {/* <SetImg src={'img/setting.png'}></SetImg> */}
+        {/* <div>{user&&user.name}</div> */}
+        {user && <div>{user.name}</div>}
+        <button onClick={() => {
+          setUser(null);
+          navigate("/login");
+          console.log('로그아웃되었습니다.')
+          }}>로그아웃</button>
         <FaUserCircle size="50" color="#FCC21B"/> 
         
       </CalHeader>

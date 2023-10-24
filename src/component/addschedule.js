@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { MdChevronLeft } from 'react-icons/md';
 import Datepicker from './datepicker';
@@ -8,13 +8,24 @@ import { createSchedule } from './redux/modules/schedule';
 import moment from 'moment';
 import axios from 'axios';
 import {Link, useNavigate} from 'react-router-dom';
+import { userState } from "./recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { useCookies } from 'react-cookie';
 
 const AddSchedule = () => {
+  const [user, setUser] = useRecoilState(userState);
+  useEffect(() => {
+    console.log(user)
+    if(user===null){
+      window.location.href = "/login";
+    }
+  }, []);
+
   const [date, setDate] = useState(
     moment().format().split(':')[0] + ':' + moment().format().split(':')[1]
   );
   const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+  const [diaryDetail, setDiaryDetail] = useState('');
   const [titleError, setTitleError] = useState(false);
   const dispatch = useDispatch();
 
@@ -33,16 +44,21 @@ const AddSchedule = () => {
   }));
 
   const classes = useStyles();
+  const [cookies] = useCookies(['token']);
+  const token = cookies.token;
+  console.log('토큰이다', token);
 
   const onAddSchedule = () => {
     if (checkValid()) {
       const yyyymmdd = date.split('T')[0].replaceAll('-', '');
+      const formattedDate = yyyymmdd.slice(0, 4) + '-' + yyyymmdd.slice(4, 6) + '-' + yyyymmdd.slice(6);
       const time = date.split('T')[1].replaceAll(':', '');
-      const data = { date: yyyymmdd, time, title, description };
+      // const data = { date: yyyymmdd, time, title, description };
+      const data = { diaryDetail, addDate: formattedDate };
+      console.log(data, token);
+      dispatch(createSchedule(data, token));
 
-      dispatch(createSchedule(data));
-
-      navigate('/');
+      // navigate('/');
     }
   };
 
@@ -84,7 +100,7 @@ const AddSchedule = () => {
           className={classes.textField}
           variant="outlined"
           onChange={(e) => {
-            setDescription(e.target.value);
+            setDiaryDetail(e.target.value);
           }}
         />
         <Button

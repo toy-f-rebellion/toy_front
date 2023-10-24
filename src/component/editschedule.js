@@ -9,8 +9,13 @@ import {
   openEditPopup,
   updateSchedule
 } from './redux/modules/schedule';
+import { useCookies } from 'react-cookie';
 
-const EditSchedule = ({ history }) => {
+const EditSchedule = () => {
+  const [cookies] = useCookies(['token']);
+  const token = cookies.token;
+  console.log('토큰이다', token);
+
   const dispatch = useDispatch();
   const { currentSchedule } = useSelector((state) => state.schedule);
 
@@ -57,7 +62,7 @@ const EditSchedule = ({ history }) => {
         id: currentSchedule.id
       };
 
-      dispatch(updateSchedule(data));
+      dispatch(updateSchedule(data,token));
       dispatch(openEditPopup(false));
     }
   };
@@ -81,7 +86,7 @@ const EditSchedule = ({ history }) => {
 
   const onDelete = () => {
     dispatch(openEditPopup(false));
-    dispatch(deleteSchedule(currentSchedule.id));
+    dispatch(deleteSchedule(currentSchedule.id, token));
   };
 
   return (

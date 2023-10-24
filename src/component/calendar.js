@@ -37,17 +37,14 @@ import EditSchedule from './editschedule';
 import { useCookies } from 'react-cookie';
 
   const Calendar = () => {
-    // const [cookies] = useCookies(['token']);
+    const [cookies] = useCookies(['token']);
+    const [user, setUser] = useRecoilState(userState);
+    const token = cookies.token;
+    console.log('토큰이다', token);
 
     useEffect(() => {
-      // Log the token to console
-      // console.log(cookies.token);
-  
-      // if(!cookies.token) {
-      //   // If there is no token in the cookies, redirect to login page
-      //   window.location.href = "/login";
-      // }
       console.log(user)
+      console.log('Token:', cookies.token);
       if(user===null){
         window.location.href = "/login";
       }
@@ -61,9 +58,10 @@ import { useCookies } from 'react-cookie';
 
   const dispatch = useDispatch();
   useEffect(() => {
-    const startDay = current.clone().startOf('month').format('YYYYMMDD');
-    const endDay = current.clone().endOf('month').format('YYYYMMDD');
-    dispatch(readSchedule({ startDay, endDay }));
+    const startDay = current.clone().startOf('month').format('YYYY-MM-DD');
+    const endDay = current.clone().endOf('month').format('YYYY-MM-DD');
+    console.log(startDay, endDay);
+    dispatch(readSchedule({ startDay, endDay }, token));
   }, [current, dispatch, isOpenEditPopup, isFilter]);
 
   const movePrevMonth = () => {
@@ -112,9 +110,17 @@ import { useCookies } from 'react-cookie';
                   ? ''
                   : 'grayed';
 
-              const currentSch = thisMonth.filter((s) => {
-                return s.date === fullDate;
-              });
+              // const currentSch = thisMonth.filter((s) => {
+              //   return s.date === fullDate;
+              // });
+
+              let currentSch = [];
+              if (thisMonth) {
+                currentSch = thisMonth.filter((s) => {
+                  return s.date === fullDate;
+                });
+              }
+
 
               const dateInfo = { day, fullDate, dow: idx, currentSch };
               return (
@@ -130,7 +136,7 @@ import { useCookies } from 'react-cookie';
     }
     return calendar;
   };
-  const [user, setUser] = useRecoilState(userState);
+
   return (
     <div>
       <CalHeader>
@@ -138,12 +144,10 @@ import { useCookies } from 'react-cookie';
         {/* <SetImg src={'img/setting.png'}></SetImg> */}
         {/* <div>{user&&user.name}</div> */}
         {user && <div>{user.name}</div>}
-        <button onClick={() => {
-          setUser(null);
-          navigate("/login");
-          console.log('로그아웃되었습니다.')
-          }}>로그아웃</button>
-        <FaUserCircle size="50" color="#FCC21B"/> 
+        <FaUserCircle size="50" color="#FCC21B"
+        onClick={() => {
+          navigate("/mypage");
+          }}/> 
         
       </CalHeader>
       <CalendarWrapper>

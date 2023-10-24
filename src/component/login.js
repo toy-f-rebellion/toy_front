@@ -71,7 +71,7 @@ const Login = () => {
         return;
     }
     try{
-        let res=await axios.post('http://3.36.100.202:8080/api/auth/signUp',{
+        let res=await axios.post('http://43.200.6.162:8080/api/auth/signUp',{
             name,
             nickname,
             email,
@@ -127,7 +127,7 @@ const signinSubmit=async (e)=>{
     return;
   }
   try{
-      let res=await axios.post('http://3.36.100.202:8080/api/auth/signIn',{
+      let res=await axios.post('http://43.200.6.162:8080/api/auth/signIn',{
           userEmail: loginemail,
           userPassword: loginpassword
       })

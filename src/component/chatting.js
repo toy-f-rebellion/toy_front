@@ -25,6 +25,8 @@ import {
     ChattingSpeaker,
     ChattingBtn,
 } from './../component_css/chatting_style';
+import { userState } from "./recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 const Chatting = () => {
     const [name, setName] = useState("");
@@ -35,8 +37,12 @@ const Chatting = () => {
 
     const chatContentRef = useRef(null); // Create a ref for chat content
 
-
+    const [user, setUser] = useRecoilState(userState);
     useEffect(() => {
+        console.log(user)
+        if(user===null){
+          window.location.href = "/login";
+        }
         // This function runs when the component mounts
         const initializeConversation= async () => {
           try{
